@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ANALYSIS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>ANALYSIS</h1>
+        <textarea id="text-input" placeholder="Write your text here"></textarea>
+        <button id="analyze-btn">TEXT ANALYSIS</button>
+        <br><br>
+        <input type="file" id="image-input" accept="image/*">
+        <button id="analyze-image-btn">IMAGE ANALYSIS</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("analyze-btn").addEventListener("click", async () => {
+            const text = document.getElementById("text-input").value;
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "Loading...";
+
+            const response = await fetch("/analyze", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `text=${encodeURIComponent(text)}`
+            });
+
+            const data = await response.json();
+            if (data.error) {
+                resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <p>Result: <strong>${data.label}</strong> (${data.score}%)</p>
+                    <p>Language: <strong>${data.language.toUpperCase()}</strong></p>
+                `;
+            }
+        });
+
+        document.getElementById("analyze-image-btn").addEventListener("click", async () => {
+            const imageInput = document.getElementById("image-input").files[0];
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "Đang phân tích...";
+
+            const formData = new FormData();
+            formData.append("image", imageInput);
+
+            const response = await fetch("/analyze_image", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.error) {
+                resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <p>Extracted Text: <strong>${data.extracted_text}</strong></p>
+                    <p>Result: <strong>${data.sentiment_analysis.label}</strong> (${data.sentiment_analysis.score}%)</p>
+                    <p>Language: <strong>${data.sentiment_analysis.language.toUpperCase()}</strong></p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
