@@ -1,4 +1,3 @@
-```markdown
 # Cài đặt TensorFlow trong Môi Trường Ảo
 
 Để sử dụng TensorFlow trong một môi trường ảo, bạn có thể làm theo các bước dưới đây. Việc sử dụng môi trường ảo (virtual environment) sẽ giúp cô lập các thư viện và tránh xung đột với các dự án khác.
