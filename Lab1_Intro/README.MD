@@ -104,19 +104,4 @@ plt.axis('off')
 plt.show()
 ```
 Hình ảnh sẽ hiển thị cùng với nhãn dự đoán.
-
-## Nhiệm vụ
-
-### 1. Thử nghiệm với các hình ảnh khác:
-- Tìm hình ảnh từ internet và thay đổi URL trong mã nguồn.
-- Quan sát kết quả dự đoán và so sánh với thực tế.
-
-### 2. Nộp kết quả:
-- Gửi mã nguồn cùng với ảnh chụp màn hình kết quả dự đoán.
-- Đính kèm ghi chú mô tả quá trình thực hiện.
-
-## Kết quả mong đợi:
-- Ảnh đầu vào được phân loại chính xác với nhãn tương ứng.
-- Biết cách sử dụng TensorFlow Hub và xử lý hình ảnh trước khi dự đoán.
-
 ---

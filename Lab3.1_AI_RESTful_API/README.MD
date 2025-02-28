@@ -145,7 +145,7 @@ if __name__ == '__main__':
 - Kiểm tra API bằng Postman.
 - Triển khai API lên Docker và Cloud.
 
-### Bài tập mở rộng
+### Mở rộng
 1. Thêm tính năng lưu lịch sử dự đoán vào cơ sở dữ liệu.
 2. Cải thiện giao diện web hiển thị kết quả dự đoán.
 3. Tích hợp API vào ứng dụng di động.
