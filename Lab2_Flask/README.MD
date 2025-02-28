@@ -1,4 +1,4 @@
-## Hướng dẫn Lab 2-1: Tích hợp Hugging Face API vào ứng dụng web để nhận dạng văn bản từ ảnh
+## Lab 2: Tích hợp Hugging Face API vào ứng dụng web để nhận dạng văn bản từ ảnh
 
 ## 1. Mục tiêu
 - Hiểu cách tích hợp API AI vào ứng dụng web.
