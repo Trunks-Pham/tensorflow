@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Classification API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+
+        .result img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .prediction {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Classify Your Image</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="file" id="fileInput" accept="image/*" required>
+            <br>
+            <button type="submit">Upload Image</button>
+        </form>
+
+        <div class="result" id="result" style="display: none;">
+            <img id="uploadedImage" src="" alt="Uploaded Image">
+            <div class="prediction" id="predictionText"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+    
+            let formData = new FormData();
+            formData.append("file", document.getElementById("fileInput").files[0]);
+    
+            fetch('http://127.0.0.1:5000/classify', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").style.display = 'block';
+    
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("uploadedImage").src = e.target.result;
+                }
+                reader.readAsDataURL(document.getElementById("fileInput").files[0]);
+    
+                document.getElementById("predictionText").innerText = `Predicted Class: ${data.predicted_class} (${data.label})`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error in classification");
+            });
+        });
+    </script>    
+</body>
+</html>
