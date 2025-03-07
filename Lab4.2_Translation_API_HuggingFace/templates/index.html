@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Translation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Text Translation</h1>
+        <textarea id="text-input" placeholder="Enter text here"></textarea>
+        <button id="translate-btn">Translate Text English to French</button>
+        <br><br>
+        <input type="file" id="image-input" accept="image/*">
+        <button id="translate-image-btn">Translate Image</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("translate-btn").addEventListener("click", async () => {
+            const text = document.getElementById("text-input").value.trim();
+            const resultDiv = document.getElementById("result");
+            if (!text) {
+                resultDiv.innerHTML = "<p class='error'>Please enter some text.</p>";
+                return;
+            }
+            resultDiv.innerHTML = "Loading...";
+
+            const response = await fetch("/translate", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `text=${encodeURIComponent(text)}`
+            });
+
+            const data = await response.json();
+            if (data.error) {
+                resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <p>Translated Text: <strong>${data.translated_text}</strong></p>
+                `;
+            }
+        });
+
+        document.getElementById("translate-image-btn").addEventListener("click", async () => {
+            const imageInput = document.getElementById("image-input").files[0];
+            const resultDiv = document.getElementById("result");
+            if (!imageInput) {
+                resultDiv.innerHTML = "<p class='error'>Please upload an image.</p>";
+                return;
+            }
+            resultDiv.innerHTML = "Translating image...";
+
+            const formData = new FormData();
+            formData.append("image", imageInput);
+
+            const response = await fetch("/translate_image", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.error) {
+                resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <p>Extracted Text: <strong>${data.extracted_text}</strong></p>
+                    <p>Translation: <strong>${data.translation.translated_text}</strong></p>
+                    <p>Processing Time: <strong>${data.processing_time}s</strong></p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
