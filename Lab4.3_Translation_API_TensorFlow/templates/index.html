@@ -1,0 +1,67 @@
+<body>
+    <div class="container">
+        <h1>Text Translation</h1>
+        <textarea id="text-input" placeholder="Nhập văn bản tại đây"></textarea>
+        <button id="translate-btn">Dịch Văn Bản (Việt sang Anh)</button>
+        <br><br>
+        <input type="file" id="image-input" accept="image/*">
+        <button id="translate-image-btn">Dịch Ảnh</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("translate-btn").addEventListener("click", async () => {
+            const text = document.getElementById("text-input").value.trim();
+            const resultDiv = document.getElementById("result");
+            if (!text) {
+                resultDiv.innerHTML = "<p class='error'>Vui lòng nhập văn bản.</p>";
+                return;
+            }
+            resultDiv.innerHTML = "Đang xử lý...";
+
+            const response = await fetch("/translate", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `text=${encodeURIComponent(text)}`
+            });
+
+            const data = await response.json();
+            if (data.error) {
+                resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <p>Văn bản dịch: <strong>${data.translated_text}</strong></p>
+                `;
+            }
+        });
+
+        document.getElementById("translate-image-btn").addEventListener("click", async () => {
+            const imageInput = document.getElementById("image-input").files[0];
+            const resultDiv = document.getElementById("result");
+            if (!imageInput) {
+                resultDiv.innerHTML = "<p class='error'>Vui lòng tải lên hình ảnh.</p>";
+                return;
+            }
+            resultDiv.innerHTML = "Đang dịch ảnh...";
+
+            const formData = new FormData();
+            formData.append("image", imageInput);
+
+            const response = await fetch("/translate_image", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.error) {
+                resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <p>Văn bản trích xuất: <strong>${data.extracted_text}</strong></p>
+                    <p>Dịch: <strong>${data.translation.translated_text}</strong></p>
+                    <p>Thời gian xử lý: <strong>${data.processing_time}s</strong></p>
+                `;
+            }
+        });
+    </script>
+</body>
