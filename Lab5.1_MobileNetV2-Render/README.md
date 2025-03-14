@@ -149,6 +149,7 @@ API sử dụng MobileNetV2, một mô hình học sâu đã được huấn luy
      ```
 
 ### Bước 4: Triển khai lên Render
+- URL: https://thaopm-mobilenetv2.onrender.com/predict
 1. **Đẩy mã nguồn lên GitHub**
    - Khởi tạo kho Git:
      ```bash
