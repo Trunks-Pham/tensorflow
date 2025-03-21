@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce App</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Arial', sans-serif; background-color: #f5f5f5; line-height: 1.6; }
+        header { 
+            background: linear-gradient(90deg, #1a73e8, #4285f4); 
+            color: white; 
+            padding: 1.5rem; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        header h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        nav { display: flex; justify-content: center; gap: 2rem; }
+        nav a { 
+            color: white; 
+            text-decoration: none; 
+            font-weight: 500; 
+            padding: 0.5rem 1rem; 
+            transition: background 0.3s; 
+            border-radius: 5px; 
+        }
+        nav a:hover, nav a.active { background-color: rgba(255,255,255,0.2); }
+        main { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        section { 
+            background: white; 
+            padding: 2rem; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            margin-bottom: 2rem; 
+            display: none; 
+        }
+        section.active { display: block; }
+        h2 { color: #333; margin-bottom: 1rem; }
+        button { 
+            padding: 0.6rem 1.2rem; 
+            background: #1a73e8; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            transition: background 0.3s; 
+        }
+        button:hover { background: #1557b0; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        textarea { 
+            width: 100%; 
+            max-width: 500px; 
+            height: 120px; 
+            padding: 0.5rem; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            resize: vertical; 
+        }
+        .product-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 1.5rem; 
+        }
+        .product { 
+            border: 1px solid #eee; 
+            padding: 1rem; 
+            border-radius: 8px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: transform 0.2s, box-shadow 0.2s; 
+            background: #fff; 
+        }
+        .product:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .product img { max-width: 100%; height: 180px; object-fit: contain; border-radius: 5px; }
+        .product p { margin-top: 0.5rem; font-size: 0.95rem; }
+        .product .title { font-weight: bold; color: #333; }
+        .product .price { color: #1a73e8; font-weight: 500; }
+        .pagination { 
+            display: flex; 
+            justify-content: center; 
+            gap: 1rem; 
+            margin-top: 1.5rem; 
+        }
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.6); 
+            z-index: 2000; 
+        }
+        .modal-content { 
+            background: white; 
+            margin: 5% auto; 
+            padding: 2rem; 
+            width: 90%; 
+            max-width: 700px; 
+            border-radius: 10px; 
+            position: relative; 
+        }
+        .close { 
+            position: absolute; 
+            top: 15px; 
+            right: 20px; 
+            font-size: 2rem; 
+            cursor: pointer; 
+            color: #555; 
+        }
+        .review-section { margin-top: 1.5rem; }
+        .error-message { color: #d32f2f; font-size: 0.9rem; margin-top: 0.5rem; }
+        .image-gallery { 
+            display: flex; 
+            gap: 1rem; 
+            overflow-x: auto; 
+            margin-top: 1rem; 
+        }
+        .image-gallery img { 
+            width: 100px; 
+            height: 100px; 
+            object-fit: cover; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            transition: opacity 0.3s; 
+        }
+        .image-gallery img:hover { opacity: 0.8; }
+        .main-image { 
+            width: 100%; 
+            max-height: 400px; 
+            object-fit: contain; 
+            border-radius: 5px; 
+            margin-bottom: 1rem; 
+        }
+        .category-image { 
+            width: 100%; 
+            max-height: 200px; 
+            object-fit: cover; 
+            border-radius: 5px; 
+            margin-top: 1rem; 
+        }
+        .modal-details p { margin: 0.5rem 0; }
+        .modal-details .description { color: #666; }
+        .reviewed-product { 
+            border: 1px solid #eee; 
+            padding: 1rem; 
+            border-radius: 8px; 
+            margin-bottom: 1rem; 
+            background: #fff; 
+        }
+        .reviewed-product img { max-width: 100%; height: 150px; object-fit: contain; }
+        .reviewed-product .review { 
+            margin-top: 0.5rem; 
+            padding: 0.5rem; 
+            background: #f9f9f9; 
+            border-radius: 5px; 
+        }
+        .reviewed-product .review span { font-weight: bold; }
+        .classify-section { margin-top: 1rem; }
+        .classify-section input[type="file"] { margin-bottom: 1rem; }
+        .classify-result { margin-top: 1rem; font-size: 1.1rem; color: #333; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Our Store</h1>
+        <nav>
+            <a href="#" data-page="home" class="active">Home</a>
+            <a href="#" data-page="reviews">Reviews</a>
+            <a href="#" data-page="recommended">Recommended</a>
+            <a href="#" data-page="classify">Classify</a>
+        </nav>
+    </header>
+    <main>
+        <section id="home" class="active">
+            <h2>Featured Products</h2>
+            <div id="product-list" class="product-grid"></div>
+            <div class="pagination">
+                <button id="prevPageHome">Previous</button>
+                <span id="pageInfoHome"></span>
+                <button id="nextPageHome">Next</button>
+            </div>
+        </section>
+        <section id="reviews">
+            <h2>Reviewed Products</h2>
+            <div id="reviewed-products"></div>
+            <h3>Analyze a New Review</h3>
+            <textarea id="comment" placeholder="Enter your review here..."></textarea>
+            <button type="button" onclick="analyzeSentiment()">Analyze Sentiment</button>
+            <p id="sentimentResult"></p>
+        </section>
+        <section id="recommended">
+            <h2>Recommended Products</h2>
+            <div id="recommendation-list" class="product-grid"></div>
+            <div class="pagination">
+                <button id="prevPageRec">Previous</button>
+                <span id="pageInfoRec"></span>
+                <button id="nextPageRec">Next</button>
+            </div>
+        </section>
+        <section id="classify">
+            <h2>Classify Product</h2>
+            <div class="classify-section">
+                <input type="file" id="imageUpload" accept="image/*">
+                <button onclick="classifyImage()">Classify Image</button>
+                <p id="classifyResult" class="classify-result"></p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2 id="modalTitle"></h2>
+            <img id="modalMainImage" class="main-image" src="" alt="">
+            <div class="image-gallery" id="modalImageGallery"></div>
+            <div class="modal-details">
+                <p id="modalPrice"></p>
+                <p id="modalCategory"></p>
+                <img id="modalCategoryImage" class="category-image" src="" alt="">
+                <p id="modalDescription" class="description"></p>
+            </div>
+            <div class="review-section">
+                <h3>Write a Review</h3>
+                <textarea id="modalReview" placeholder="Your review..."></textarea>
+                <button onclick="submitReview()">Submit Review</button>
+                <p id="modalSentimentResult"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userId = "user1"; // Giả lập user_id
+        let clickedProducts = new Set();
+        let allProducts = [];
+        const productsPerPage = 20;
+        let currentPageHome = 1;
+        let currentPageRec = 1;
+        let currentProductId = null;
+        let totalProducts = 0;
+
+        // Chuyển đổi trang
+        const navLinks = document.querySelectorAll('nav a');
+        const sections = document.querySelectorAll('section');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                const page = link.getAttribute('data-page');
+                sections.forEach(section => {
+                    section.classList.toggle('active', section.id === page);
+                });
+                if (page === 'reviews') fetchReviewedProducts();
+                if (page === 'recommended') fetchRecommendations();
+                if (page === 'classify') document.getElementById('classifyResult').textContent = ''; // Reset kết quả khi vào trang
+            });
+        });
+
+        // Modal handling
+        const modal = document.getElementById('productModal');
+        const closeModal = document.querySelector('.close');
+        closeModal.onclick = () => modal.style.display = 'none';
+        window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+
+        // Lấy danh sách sản phẩm
+        async function fetchProducts() {
+            try {
+                const response = await fetch(`/products?page=${currentPageHome}&page_size=${productsPerPage}`);
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                allProducts = data.products;
+                console.log('Product IDs:', allProducts.map(p => p.id));
+                totalProducts = 100; // Giả định
+                displayProducts('home', currentPageHome);
+                setupPagination('home');
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                document.getElementById('product-list').innerHTML = '<p class="error-message">Failed to load products.</p>';
+            }
+        }
+
+        // Hiển thị sản phẩm
+        function displayProducts(sectionId, page) {
+            const productList = document.getElementById(`${sectionId === 'home' ? 'product-list' : 'recommendation-list'}`);
+            const productsToShow = sectionId === 'home' ? allProducts : getRecommendedProducts();
+
+            if (!productsToShow.length) {
+                productList.innerHTML = '<p>No products available.</p>';
+                return;
+            }
+
+            productList.innerHTML = '';
+            productsToShow.forEach(product => {
+                const div = document.createElement('div');
+                div.className = 'product';
+                div.innerHTML = `
+                    <img src="${product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/150'}" alt="${product.title}" onerror="this.src='https://via.placeholder.com/150';">
+                    <p class="title">${product.title}</p>
+                    <p class="price">$${product.price}</p>
+                `;
+                div.onclick = () => fetchProductDetails(product.id);
+                productList.appendChild(div);
+            });
+        }
+
+        // Lấy chi tiết sản phẩm từ API
+        async function fetchProductDetails(productId) {
+            try {
+                const response = await fetch(`/product/${productId}`);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+                }
+                const product = await response.json();
+                console.log('Product data:', product);
+                showProductModal(product);
+                clickedProducts.add(productId);
+                trackClick(productId);
+            } catch (error) {
+                console.error('Error fetching product details:', error);
+                document.getElementById('modalTitle').textContent = 'Product Not Found';
+                document.getElementById('modalMainImage').src = 'https://via.placeholder.com/150';
+                document.getElementById('modalPrice').textContent = '';
+                document.getElementById('modalCategory').textContent = '';
+                document.getElementById('modalCategoryImage').src = 'https://via.placeholder.com/150';
+                document.getElementById('modalDescription').textContent = `Error: ${error.message}`;
+                document.getElementById('modalImageGallery').innerHTML = '';
+                modal.style.display = 'block';
+            }
+        }
+
+        // Thiết lập phân trang
+        function setupPagination(sectionId) {
+            const totalItems = sectionId === 'home' ? totalProducts : getRecommendedProducts().length;
+            const totalPages = Math.ceil(totalItems / productsPerPage);
+            const prevBtn = document.getElementById(`prevPage${sectionId === 'home' ? 'Home' : 'Rec'}`);
+            const nextBtn = document.getElementById(`nextPage${sectionId === 'home' ? 'Home' : 'Rec'}`);
+            const pageInfo = document.getElementById(`pageInfo${sectionId === 'home' ? 'Home' : 'Rec'}`);
+            const currentPage = sectionId === 'home' ? currentPageHome : currentPageRec;
+
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages || totalItems === 0;
+
+            prevBtn.onclick = async () => {
+                if (currentPage > 1) {
+                    if (sectionId === 'home') {
+                        currentPageHome--;
+                        await fetchProducts();
+                    } else {
+                        currentPageRec--;
+                        displayProducts(sectionId, currentPageRec);
+                        setupPagination(sectionId);
+                    }
+                }
+            };
+            nextBtn.onclick = async () => {
+                if (currentPage < totalPages) {
+                    if (sectionId === 'home') {
+                        currentPageHome++;
+                        await fetchProducts();
+                    } else {
+                        currentPageRec++;
+                        displayProducts(sectionId, currentPageRec);
+                        setupPagination(sectionId);
+                    }
+                }
+            };
+        }
+
+        // Hiển thị modal chi tiết sản phẩm
+        function showProductModal(product) {
+            currentProductId = product.id;
+            document.getElementById('modalTitle').textContent = product.title;
+            const mainImage = document.getElementById('modalMainImage');
+            mainImage.src = product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/150';
+            mainImage.onerror = () => { mainImage.src = 'https://via.placeholder.com/150'; };
+
+            const gallery = document.getElementById('modalImageGallery');
+            gallery.innerHTML = '';
+            if (Array.isArray(product.images) && product.images.length > 0) {
+                product.images.forEach(imgUrl => {
+                    const img = document.createElement('img');
+                    img.src = imgUrl;
+                    img.alt = product.title;
+                    img.onerror = () => { img.src = 'https://via.placeholder.com/150'; };
+                    img.onclick = () => { mainImage.src = img.src; };
+                    gallery.appendChild(img);
+                });
+            } else {
+                gallery.innerHTML = '<p>No images available</p>';
+            }
+
+            document.getElementById('modalPrice').textContent = `Price: $${product.price}`;
+            document.getElementById('modalCategory').textContent = `Category: ${product.category}`;
+            const categoryImage = document.getElementById('modalCategoryImage');
+            categoryImage.src = product.category_image || 'https://via.placeholder.com/150';
+            categoryImage.alt = `${product.category} image`;
+            categoryImage.onerror = () => { categoryImage.src = 'https://via.placeholder.com/150'; };
+            document.getElementById('modalDescription').textContent = product.description;
+            document.getElementById('modalReview').value = '';
+            document.getElementById('modalSentimentResult').textContent = '';
+            modal.style.display = 'block';
+        }
+
+        // Gửi và phân tích review trong modal
+        async function submitReview() {
+            const review = document.getElementById('modalReview').value.trim();
+            if (!review) {
+                document.getElementById('modalSentimentResult').textContent = 'Please enter a review.';
+                return;
+            }
+            try {
+                const response = await fetch('/submit_review', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, product_id: currentProductId, review: review })
+                });
+                const result = await response.json();
+                if (result.error) throw new Error(result.error);
+                document.getElementById('modalSentimentResult').textContent = `Sentiment: ${result.sentiment}`;
+                fetchReviewedProducts();
+            } catch (error) {
+                document.getElementById('modalSentimentResult').textContent = `Error: ${error.message}`;
+            }
+        }
+
+        // Theo dõi click vào sản phẩm
+        async function trackClick(productId) {
+            try {
+                await fetch('/track_click', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, product_id: productId })
+                });
+            } catch (error) {
+                console.error('Error tracking click:', error);
+            }
+        }
+
+        // Lấy danh sách sản phẩm được gợi ý
+        async function fetchRecommendations() {
+            try {
+                const response = await fetch(`/recommend?user_id=${userId}`);
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                const recommendedProducts = data.recommendations;
+                displayRecommendations(recommendedProducts);
+                setupPagination('recommended');
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+                document.getElementById('recommendation-list').innerHTML = '<p class="error-message">Failed to load recommendations.</p>';
+            }
+        }
+
+        function displayRecommendations(products) {
+            const recommendationList = document.getElementById('recommendation-list');
+            recommendationList.innerHTML = '';
+            if (!products.length) {
+                recommendationList.innerHTML = '<p>No recommendations available yet.</p>';
+                return;
+            }
+            products.forEach(product => {
+                const div = document.createElement('div');
+                div.className = 'product';
+                div.innerHTML = `
+                    <img src="${product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/150'}" alt="${product.title}" onerror="this.src='https://via.placeholder.com/150';">
+                    <p class="title">${product.title}</p>
+                    <p class="price">$${product.price}</p>
+                `;
+                div.onclick = () => fetchProductDetails(product.id);
+                recommendationList.appendChild(div);
+            });
+        }
+
+        // Phân tích sentiment (trang Reviews)
+        async function analyzeSentiment() {
+            const comment = document.getElementById('comment').value.trim();
+            if (!comment) {
+                document.getElementById('sentimentResult').textContent = 'Please enter a review.';
+                return;
+            }
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ comment: comment })
+                });
+                const result = await response.json();
+                if (result.error) throw new Error(result.error);
+                document.getElementById('sentimentResult').textContent = `Sentiment: ${result.sentiment}`;
+            } catch (error) {
+                document.getElementById('sentimentResult').textContent = `Error: ${error.message}`;
+            }
+        }
+
+        // Lấy và hiển thị danh sách sản phẩm đã review
+        async function fetchReviewedProducts() {
+            try {
+                const response = await fetch('/reviews');
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                displayReviewedProducts(data.reviewed_products);
+            } catch (error) {
+                console.error('Error fetching reviewed products:', error);
+                document.getElementById('reviewed-products').innerHTML = '<p class="error-message">Failed to load reviewed products.</p>';
+            }
+        }
+
+        function displayReviewedProducts(products) {
+            const reviewedProductsDiv = document.getElementById('reviewed-products');
+            reviewedProductsDiv.innerHTML = '';
+            if (!products.length) {
+                reviewedProductsDiv.innerHTML = '<p>No reviewed products yet.</p>';
+                return;
+            }
+            products.forEach(product => {
+                const div = document.createElement('div');
+                div.className = 'reviewed-product';
+                div.innerHTML = `
+                    <img src="${product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/150'}" alt="${product.title}" onerror="this.src='https://via.placeholder.com/150';">
+                    <p><strong>${product.title}</strong></p>
+                    <p>Price: $${product.price}</p>
+                    <p>Category: ${product.category}</p>
+                    <p>${product.description}</p>
+                `;
+                product.reviews.forEach(review => {
+                    const reviewDiv = document.createElement('div');
+                    reviewDiv.className = 'review';
+                    reviewDiv.innerHTML = `
+                        <p><span>User:</span> ${review.user_id}</p>
+                        <p><span>Review:</span> ${review.review}</p>
+                        <p><span>Sentiment:</span> ${review.sentiment}</p>
+                    `;
+                    div.appendChild(reviewDiv);
+                });
+                div.onclick = () => fetchProductDetails(product.id);
+                reviewedProductsDiv.appendChild(div);
+            });
+        }
+
+        // Phân loại hình ảnh
+        async function classifyImage() {
+            const fileInput = document.getElementById('imageUpload');
+            const resultDiv = document.getElementById('classifyResult');
+            if (!fileInput.files || !fileInput.files[0]) {
+                resultDiv.textContent = 'Please select an image.';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/classify', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.error) throw new Error(result.error);
+                resultDiv.textContent = `Predicted Category: ${result.category}`;
+            } catch (error) {
+                console.error('Error classifying image:', error);
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        // Tải sản phẩm khi trang load
+        window.onload = fetchProducts;
+    </script>
+</body>
+</html>
