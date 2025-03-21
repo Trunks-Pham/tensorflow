@@ -1,0 +1,30 @@
+# Loại bỏ tệp mô hình lớn cụ thể
+Final_Project/sentiment_model/model.safetensors
+
+# Loại bỏ các tệp mô hình lớn khác (nếu có)
+*.safetensors
+*.h5
+*.pth
+*.pt
+
+# Loại bỏ thư mục tạm hoặc tệp cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Loại bỏ thư mục môi trường Python
+venv/
+env/
+.env
+
+# Loại bỏ tệp log
+*.log
+
+# Loại bỏ tệp tạm của hệ thống
+*.DS_Store
+*.bak
+*.swp
+
+# Loại bỏ thư mục uploads (nếu không cần đẩy lên)
+Final_Project/static/uploads/
