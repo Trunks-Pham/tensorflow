@@ -2,7 +2,7 @@
 
 Đây là một ứng dụng web e-commerce đơn giản được xây dựng bằng Flask (Python) và HTML/CSS/JavaScript. Ứng dụng tích hợp API từ EscuelaJS để hiển thị sản phẩm, cho phép người dùng gửi và xem review, phân tích cảm xúc của review, đồng thời cung cấp gợi ý sản phẩm dựa trên lượt click.
 
-## Sản phẩm: (`https://thaopm-finalproject.onrender.com`)
+## Sản phẩm: ```https://thaopm-finalproject.onrender.com```
 
 
 ## Tính năng chính
