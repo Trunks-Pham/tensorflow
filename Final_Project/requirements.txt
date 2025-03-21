@@ -1,6 +1,7 @@
-flask 
-tensorflow 
-requests 
-transformers 
-numpy 
+flask
+tensorflow
+requests
+transformers
+numpy
 gunicorn
+Pillow
