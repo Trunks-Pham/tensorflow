@@ -1,32 +1,32 @@
-from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
+from transformers import TFAutoModelForSequenceClassification, AutoTokenizer, pipeline
 
-# Tải mô hình và tokenizer cục bộ
-model_name = "distilbert-base-uncased-finetuned-sst-2-english"
+# Tải mô hình sentiment analysis với TensorFlow
 try:
-    model = AutoModelForSequenceClassification.from_pretrained("./sentiment_model")
+    # Nếu bạn có mô hình cục bộ
+    model = TFAutoModelForSequenceClassification.from_pretrained("./sentiment_model", from_tf=True)
     tokenizer = AutoTokenizer.from_pretrained("./sentiment_model")
-except:
-    # Nếu không tìm thấy mô hình cục bộ, tải từ Hugging Face và lưu lại
-    model = AutoModelForSequenceClassification.from_pretrained(model_name)
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model.save_pretrained("./sentiment_model")
-    tokenizer.save_pretrained("./sentiment_model")
-
-# Khởi tạo pipeline với mô hình và tokenizer
-sentiment_pipeline = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
-
-def analyze_sentiment(comment):
-    """
-    Phân tích cảm xúc của bình luận.
-    Args:
-        comment (str): Bình luận cần phân tích.
-    Returns:
-        str: Nhãn cảm xúc ('POSITIVE', 'NEGATIVE') hoặc thông báo lỗi.
-    """
-    if not isinstance(comment, str) or not comment.strip():
-        return "Error: Comment must be a non-empty string"
+    sentiment_analyzer = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer, framework='tf')
+except Exception as e:
+    print(f"Error loading sentiment model: {str(e)}")
+    # Nếu không có mô hình cục bộ, dùng mô hình mặc định từ Hugging Face
     try:
-        result = sentiment_pipeline(comment)
-        return result[0]['label'].capitalize()  # Chuẩn hóa định dạng: Positive, Negative
+        sentiment_analyzer = pipeline('sentiment-analysis', framework='tf')
+    except Exception as e:
+        print(f"Error loading default sentiment model: {str(e)}")
+        sentiment_analyzer = None
+
+def analyze_sentiment(text):
+    """
+    Phân tích cảm xúc của đoạn văn bản.
+    Args:
+        text (str): Văn bản cần phân tích.
+    Returns:
+        str: Positive, Negative hoặc thông báo lỗi.
+    """
+    if not sentiment_analyzer:
+        return "Error: Sentiment model not loaded"
+    try:
+        result = sentiment_analyzer(text)
+        return result[0]['label']  
     except Exception as e:
         return f"Error analyzing sentiment: {str(e)}"
