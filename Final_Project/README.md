@@ -2,6 +2,9 @@
 
 Đây là một ứng dụng web e-commerce đơn giản được xây dựng bằng Flask (Python) và HTML/CSS/JavaScript. Ứng dụng tích hợp API từ EscuelaJS để hiển thị sản phẩm, cho phép người dùng gửi và xem review, phân tích cảm xúc của review, đồng thời cung cấp gợi ý sản phẩm dựa trên lượt click.
 
+## Sản phẩm: (`https://thaopm-finalproject.onrender.com`)
+
+
 ## Tính năng chính
 - **Danh sách sản phẩm**: Hiển thị sản phẩm từ API EscuelaJS với phân trang.
 - **Chi tiết sản phẩm**: Xem chi tiết sản phẩm trong modal, bao gồm ảnh chính, thư viện ảnh, ảnh danh mục, giá, mô tả, v.v.
@@ -93,7 +96,7 @@ Final_Project/
 4. **Trang Recommended**:
    - Xem sản phẩm được gợi ý dựa trên lịch sử click.
 
-5. **Phân loại hình ảnh** (tính năng phụ):
+5. **Phân loại hình ảnh**:
    - Gửi yêu cầu POST tới `/classify` với file hình ảnh để phân loại danh mục.
 
 ## API Endpoints
@@ -109,7 +112,6 @@ Final_Project/
 ## Lưu ý
 - **Lưu trữ review**: Hiện tại review được lưu trong bộ nhớ (`product_reviews`). Để lưu lâu dài, cần tích hợp database (SQLite, MongoDB, v.v.).
 - **API EscuelaJS**: Ứng dụng phụ thuộc vào API bên thứ ba (`https://api.escuelajs.co`). Nếu API không hoạt động, ứng dụng sẽ gặp lỗi.
-- **Tổng số sản phẩm**: `totalProducts` hiện giả định là 100. Cần cập nhật logic nếu API cung cấp tổng số thực tế.
 
 ## Đóng góp
 - Fork repository, tạo pull request với cải tiến hoặc sửa lỗi.

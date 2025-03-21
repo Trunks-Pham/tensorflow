@@ -29,4 +29,4 @@ def analyze_sentiment(comment):
         result = sentiment_pipeline(comment)
         return result[0]['label'].capitalize()  # Chuẩn hóa định dạng: Positive, Negative
     except Exception as e:
-        return f"Error analyzing sentiment: {str(e)}" " fix <!DOCTYPE html>
+        return f"Error analyzing sentiment: {str(e)}
